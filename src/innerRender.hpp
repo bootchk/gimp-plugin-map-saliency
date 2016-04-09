@@ -1,0 +1,2 @@
+
+void detectSaliency(cv::Mat );

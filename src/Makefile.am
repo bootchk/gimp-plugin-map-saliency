@@ -10,7 +10,9 @@ gimp_plugin_engine_saliency_SOURCES = \
 	render.c	\
 	render.h	\
 	adaptOpenCV.cpp \
-	adaptOpenCV.hpp
+	adaptOpenCV.hpp \
+	innerRender.cpp \
+	innerRender.hpp
 
 AM_CPPFLAGS =\
 	-I$(top_srcdir)		\

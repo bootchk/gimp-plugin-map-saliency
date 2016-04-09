@@ -29,51 +29,8 @@
 #include <libgimp/gimp.h>
 #include <opencv2/core/core.hpp>
 #include "adaptOpenCV.hpp"
+#include "innerRender.hpp"
 
-#include "/usr/local/include/libsaliency.hpp"
-
-
-void detectSaliency(cv::Mat matGrayscaleChar)	// In Out
-{
-  // Require
-  assert(matGrayscaleChar.channels()==1);
-  assert(matGrayscaleChar.depth()==CV_8UC1);
-
-  // convert type of in mat from char to float expected by libsaliency
-  // Allocates a new Mat since size is larger
-  // Default is no scaling: 1-255 => 1.0-255.0 ??
-  cv::Mat1f matFloat;
-  matGrayscaleChar.convertTo(matFloat, CV_32F);
-
-  assert(matFloat.channels()==1);
-  assert(matFloat.depth()==CV_32F);
-  assert(matFloat.size() == matGrayscaleChar.size() );
-  assert(matFloat.total()*matFloat.elemSize() == 4*matGrayscaleChar.total()*matGrayscaleChar.elemSize());
-
-  // invoke library
-  sal::ImageSaliencyDetector detector(matFloat);
-  detector.setSamplingPercentage(0.10f);
-  detector.compute();
-  detector.performPostProcessing();
-  cv::Mat innermostResult = detector.getSaliencyMap();
-
-  assert(innermostResult.type() == CV_32F);
-
-  // Test: innermostResult all zeros
-  // innermostResult.release();
-  // innermostResult = cv::Mat(matGrayscaleChar.rows, matGrayscaleChar.cols, CV_32F, double(0));
-
-  // matGrayscaleChar values are unchanged, so far (read only to algorithm.)
-  // Convert innermostResult back to uchar into the input matGrayscaleChar.
-  // Allocates new mat since size is reduced by four
-  innermostResult.convertTo(matGrayscaleChar, CV_8UC1);
-
-  // matGrayscaleChar = cv::Scalar(50);	// Test.  Set uniform pixelel.
-
-  // Ensure matGrayscaleChar is a saliency map of one channel of depth uchar.
-  assert(matGrayscaleChar.channels() == 1);
-  assert(matGrayscaleChar.type() == CV_8UC1);
-}
 
 
 void renderUsingOpenCV (
